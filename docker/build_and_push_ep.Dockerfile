@@ -74,7 +74,7 @@ COPY --from=builder --chown=1000 /app/.venv /app/.venv
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Place executables in the environment at the front of the path
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/venv/bin:$PATH"
 
 LABEL org.opencontainers.image.title=langflow
 LABEL org.opencontainers.image.authors=['Langflow']
@@ -87,5 +87,7 @@ WORKDIR /app
 ENV LANGFLOW_HOST=0.0.0.0
 ENV LANGFLOW_PORT=7860
 
+VOLUME /venv
+
 USER 1000
-ENTRYPOINT ["python", "-m", "langflow", "run", "--host", "0.0.0.0", "--backend-only"]
+ENTRYPOINT ["cp", "-R", "/app/.venv", "/venv", "&&", "python", "-m", "langflow", "run", "--host", "0.0.0.0", "--backend-only"]
